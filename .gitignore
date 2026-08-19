@@ -1,0 +1,33 @@
+### ===== ASP.NET Core / .NET (backend) =====
+[Bb]in/
+[Oo]bj/
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+### ===== Flutter / Dart (frontend) =====
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+build/
+.pub-cache/
+.pub/
+
+# Platform-specific generated/ephemeral files
+**/android/.gradle/
+**/android/app/build/
+**/ios/Pods/
+**/ios/.symlinks/
+**/ios/Flutter/ephemeral/
+**/macos/Flutter/ephemeral/
+**/windows/flutter/ephemeral/
+**/linux/flutter/ephemeral/
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+.DS_Store
