@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
 import '../services/auth_session.dart';
+import '../services/secure_storage_service.dart';
 
-/// Owns everything the Sign In screen needs: the text controllers for
-/// the input fields, and ValueNotifiers for anything the UI should
-/// react to (loading spinner, error text, obscure-password toggle).
-///
-/// The screen just listens to these - it never manages state itself.
+/// Owns everything the Sign In screen needs.
 class SignInController {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -20,17 +17,29 @@ class SignInController {
     obscurePassword.value = !obscurePassword.value;
   }
 
-  /// Returns true on success. The screen decides what to do with that
-  /// (navigate away), this controller only handles the request itself.
+  /// Returns true on success.
   Future<bool> login() async {
     errorMessage.value = null;
     isLoading.value = true;
+
     try {
       final result = await ApiService.login(
         email: emailController.text.trim(),
         password: passwordController.text,
       );
-      AuthSession.instance.setSession(token: result.token, role: result.role);
+
+      AuthSession.instance.setSession(
+        token: result.token,
+        role: result.role,
+      );
+
+      // Save the token only if Remember Me is checked.
+      if (rememberMe.value) {
+        await SecureStorageService.saveToken(result.token);
+      } else {
+        await SecureStorageService.deleteToken();
+      }
+
       return true;
     } on ApiException catch (e) {
       errorMessage.value = e.message;
@@ -43,9 +52,6 @@ class SignInController {
     }
   }
 
-  /// Call this from the screen's State.dispose(). It wipes the typed
-  /// email/password (and every notifier) from memory - once the user
-  /// is past login, none of this needs to stick around.
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
