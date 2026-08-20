@@ -50,7 +50,8 @@ class HomeAppBar extends StatelessWidget {
               child: Stack(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(
+                        12), // was 10, slightly roomier circle
                     decoration: BoxDecoration(
                       color: Colors.grey.shade100,
                       shape: BoxShape.circle,
@@ -62,8 +63,8 @@ class HomeAppBar extends StatelessWidget {
                   ),
                   if (hasUnread)
                     Positioned(
-                      right: 6,
-                      top: 6,
+                      right: 8,
+                      top: 8,
                       child: Container(
                         width: 8,
                         height: 8,

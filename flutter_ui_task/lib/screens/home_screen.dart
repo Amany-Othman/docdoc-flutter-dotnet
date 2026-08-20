@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+
 import '../controllers/home_controller.dart';
+import '../models/speciality.dart';
 import '../widgets/home/home_app_bar.dart';
 import '../widgets/home/booking_banner.dart';
 import '../widgets/home/speciality_section.dart';
 import '../widgets/home/doctor_section.dart';
 import '../widgets/home/home_bottom_nav_bar.dart';
 import '../services/auth_session.dart';
+
+import 'all_specialities_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -20,15 +24,17 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+
     _controller = HomeController();
     _controller.loadRecommendedDoctors();
+    _controller.loadFeaturedSpecialities();
   }
 
   @override
   void dispose() {
-    // This page's login/signup input controllers are already gone by now
-    // (disposed in their own screens). Here we just clean up this screen's
-    // own notifiers so nothing survives once the user navigates away.
+    // This page's login/signup input controllers are already gone by now.
+    // Here we just clean up this screen's own notifiers so nothing survives
+    // once the user navigates away.
     _controller.dispose();
     super.dispose();
   }
@@ -57,10 +63,19 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 ),
                 const SizedBox(height: 24),
-                SpecialitySection(
-                  specialities: _controller.specialities,
-                  onSeeAll: () {
-                    // TODO: navigate to all specialities screen
+                ValueListenableBuilder<List<Speciality>>(
+                  valueListenable: _controller.featuredSpecialities,
+                  builder: (context, specialities, _) {
+                    return SpecialitySection(
+                      specialities: specialities,
+                      onSeeAll: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => const AllSpecialitiesScreen(),
+                          ),
+                        );
+                      },
+                    );
                   },
                 ),
                 const SizedBox(height: 24),

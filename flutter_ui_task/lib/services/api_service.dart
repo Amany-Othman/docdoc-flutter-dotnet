@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/auth_response.dart';
 import '../models/doctor.dart';
+import '../models/speciality.dart';
 
 /// Thrown when the server responds with an error we can show the user
 /// (wrong password, email already taken, etc).
@@ -13,8 +14,7 @@ class ApiException implements Exception {
 /// All network calls live here. Screens and controllers never call
 /// `http` directly - they only ever talk to ApiService.
 class ApiService {
-  static const String _baseUrl = 'http://localhost:5042/api';
-
+  static const String _baseUrl = 'http://192.168.1.10:5042/api';
   static Future<AuthResponse> login({
     required String email,
     required String password,
@@ -68,6 +68,35 @@ class ApiService {
     }
     throw ApiException(
         _extractMessage(response.body) ?? 'Could not load doctors.');
+  }
+
+  /// Matches SpecialityController.GetFeatured() -
+  /// GET api/Speciality/featured. Used by the home screen's small
+  /// speciality row.
+  static Future<List<Speciality>> getFeaturedSpecialities() async {
+    final uri = Uri.parse('$_baseUrl/Speciality/featured');
+    final response = await http.get(uri);
+
+    if (response.statusCode == 200) {
+      final List<dynamic> decoded = jsonDecode(response.body);
+      return decoded.map((json) => Speciality.fromJson(json)).toList();
+    }
+    throw ApiException(
+        _extractMessage(response.body) ?? 'Could not load specialities.');
+  }
+
+  /// Matches SpecialityController.GetAll() - GET api/Speciality.
+  /// Used by the "All Specialities" screen.
+  static Future<List<Speciality>> getAllSpecialities() async {
+    final uri = Uri.parse('$_baseUrl/Speciality');
+    final response = await http.get(uri);
+
+    if (response.statusCode == 200) {
+      final List<dynamic> decoded = jsonDecode(response.body);
+      return decoded.map((json) => Speciality.fromJson(json)).toList();
+    }
+    throw ApiException(
+        _extractMessage(response.body) ?? 'Could not load specialities.');
   }
 
   static String? _extractMessage(String body) {

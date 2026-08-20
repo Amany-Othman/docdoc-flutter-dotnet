@@ -1,40 +1,19 @@
 import 'package:flutter/material.dart';
+
 import '../models/doctor.dart';
 import '../models/speciality.dart';
 import '../services/api_service.dart';
 
 class HomeController {
   final ValueNotifier<int> selectedNavIndex = ValueNotifier<int>(0);
+
   final ValueNotifier<bool> hasUnreadNotifications = ValueNotifier<bool>(true);
+
   final ValueNotifier<List<Doctor>> recommendedDoctors =
       ValueNotifier<List<Doctor>>(const []);
 
-  final List<Speciality> specialities = const [
-    Speciality(
-      label: 'General',
-      icon: Icons.medical_services_outlined,
-      backgroundColor: Color(0xFFEFF3FF),
-      iconColor: Color(0xFF4E7FFF),
-    ),
-    Speciality(
-      label: 'Neurologic',
-      icon: Icons.psychology_outlined,
-      backgroundColor: Color(0xFFFFEDED),
-      iconColor: Color(0xFFFF5A5A),
-    ),
-    Speciality(
-      label: 'Pediatric',
-      icon: Icons.child_care_outlined,
-      backgroundColor: Color(0xFFFFEEF5),
-      iconColor: Color(0xFFFF6FA5),
-    ),
-    Speciality(
-      label: 'Radiology',
-      icon: Icons.favorite_border,
-      backgroundColor: Color(0xFFEDEBFF),
-      iconColor: Color(0xFF8A6BFF),
-    ),
-  ];
+  final ValueNotifier<List<Speciality>> featuredSpecialities =
+      ValueNotifier<List<Speciality>>(const []);
 
   Future<void> loadRecommendedDoctors() async {
     try {
@@ -46,6 +25,17 @@ class HomeController {
       recommendedDoctors.value = const [];
     } catch (_) {
       recommendedDoctors.value = const [];
+    }
+  }
+
+  Future<void> loadFeaturedSpecialities() async {
+    try {
+      final specialities = await ApiService.getFeaturedSpecialities();
+      featuredSpecialities.value = specialities;
+    } on ApiException {
+      featuredSpecialities.value = const [];
+    } catch (_) {
+      featuredSpecialities.value = const [];
     }
   }
 
@@ -63,5 +53,6 @@ class HomeController {
     selectedNavIndex.dispose();
     hasUnreadNotifications.dispose();
     recommendedDoctors.dispose();
+    featuredSpecialities.dispose();
   }
 }
