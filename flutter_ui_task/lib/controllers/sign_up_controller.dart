@@ -3,6 +3,7 @@ import '../services/api_service.dart';
 import '../services/auth_session.dart';
 
 class SignUpController {
+  final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
@@ -19,12 +20,14 @@ class SignUpController {
     errorMessage.value = null;
     isLoading.value = true;
     try {
+      final name = nameController.text.trim();
       final email = emailController.text.trim();
       final password = passwordController.text;
 
       // Step 1: create the account. The backend's /register endpoint
       // only confirms creation - it doesn't hand back a token.
       await ApiService.register(
+        name: name,
         email: email,
         password: password,
         mobile: phoneController.text.trim(),
@@ -33,8 +36,13 @@ class SignUpController {
       // Step 2: log the brand-new account in immediately, using the
       // same credentials, so the user lands on the home screen already
       // signed in instead of being sent back to a login form.
-      final loginResult = await ApiService.login(email: email, password: password);
-      AuthSession.instance.setSession(token: loginResult.token, role: loginResult.role);
+      final loginResult =
+          await ApiService.login(email: email, password: password);
+      AuthSession.instance.setSession(
+        token: loginResult.token,
+        role: loginResult.role,
+        name: loginResult.name,
+      );
 
       return true;
     } on ApiException catch (e) {
@@ -49,8 +57,9 @@ class SignUpController {
   }
 
   /// Same idea as SignInController.dispose() - clears the typed
-  /// email/password/phone from memory once this screen is gone.
+  /// name/email/password/phone from memory once this screen is gone.
   void dispose() {
+    nameController.dispose();
     emailController.dispose();
     passwordController.dispose();
     phoneController.dispose();

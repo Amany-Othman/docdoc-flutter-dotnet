@@ -44,14 +44,14 @@ namespace WebApplicationC.Controllers
             }
 
             var user = new User
-            {
-                Email = request.Email,
-                Mobile = request.Mobile,
-                Password = BCrypt.Net.BCrypt.HashPassword(request.Password),
-                Role = "User",
-                Name = string.Empty,
-                Age = 0
-            };
+       {
+        Email = request.Email,
+        Mobile = request.Mobile,
+        Password = BCrypt.Net.BCrypt.HashPassword(request.Password),
+        Role = "User",
+        Name = request.Name,
+        Age = 0
+       };
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
@@ -151,7 +151,8 @@ namespace WebApplicationC.Controllers
             {
                 message = "Login successful",
                 token = tokenString,
-                role = user.Role
+                role = user.Role,
+                name = user.Name
             });
         }
     }

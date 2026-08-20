@@ -31,6 +31,8 @@ class SignInController {
       AuthSession.instance.setSession(
         token: result.token,
         role: result.role,
+        name: result.name,
+        persist: rememberMe.value,
       );
 
       // Save the token only if Remember Me is checked.

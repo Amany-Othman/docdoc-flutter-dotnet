@@ -21,7 +21,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   void dispose() {
     // Same reasoning as Sign In - once this screen is gone, the typed
-    // email/password/phone and every notifier are released.
+    // name/email/password/phone and every notifier are released.
     _controller.dispose();
     super.dispose();
   }
@@ -49,7 +49,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     'Sign up now and start exploring all that our app has to offer. We are excited to welcome you to our community!',
               ),
               const SizedBox(height: 28),
-              AppTextField(controller: _controller.emailController, hint: 'Email'),
+              AppTextField(
+                  controller: _controller.nameController, hint: 'Full name'),
+              const SizedBox(height: 14),
+              AppTextField(
+                  controller: _controller.emailController, hint: 'Email'),
               const SizedBox(height: 14),
               ValueListenableBuilder<bool>(
                 valueListenable: _controller.obscurePassword,
@@ -59,7 +63,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     hint: 'Password',
                     obscureText: obscure,
                     suffixIcon: IconButton(
-                      icon: Icon(obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined),
+                      icon: Icon(obscure
+                          ? Icons.visibility_off_outlined
+                          : Icons.visibility_outlined),
                       onPressed: _controller.toggleObscurePassword,
                     ),
                   );
@@ -72,7 +78,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 keyboardType: TextInputType.phone,
                 prefixIcon: const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 12),
-                  child: Center(widthFactor: 1, child: Text('🇪🇬', style: TextStyle(fontSize: 18))),
+                  child: Center(
+                      widthFactor: 1,
+                      child: Text('🇪🇬', style: TextStyle(fontSize: 18))),
                 ),
               ),
               const SizedBox(height: 12),
